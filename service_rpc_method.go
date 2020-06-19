@@ -1,10 +1,10 @@
 package websocket
 
 import (
+	pb "github.com/bin-x/websocket/proto"
 	"golang.org/x/net/context"
 	"log"
 	"strconv"
-	pb "websocket/proto"
 )
 
 type rpcMethods struct {

@@ -3,9 +3,9 @@ package websocket
 import (
 	"context"
 	"errors"
+	pb "github.com/bin-x/websocket/proto"
 	"log"
 	"reflect"
-	pb "websocket/proto"
 )
 
 var Api *ServiceApi

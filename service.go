@@ -3,6 +3,7 @@ package websocket
 import (
 	"encoding/json"
 	"errors"
+	pb "github.com/bin-x/websocket/proto"
 	"github.com/gorilla/websocket"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/keepalive"
@@ -11,7 +12,6 @@ import (
 	"net/http"
 	"net/url"
 	"time"
-	pb "websocket/proto"
 )
 
 type ServiceHub struct {
