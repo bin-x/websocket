@@ -79,7 +79,6 @@ func (sh *ServiceHub) run() {
 			delete(sh.clients, client.id)
 			// 从uid中删除
 			delete(sh.uidClients[client.uid], client)
-
 			// 从group中删除
 			for group := range client.groups {
 				delete(sh.groups[group], client)
@@ -154,9 +153,7 @@ func (sh *ServiceHub) Start(addr string) {
 
 	Api = &ServiceApi{hub: sh}
 	log.Println("starting Service...")
-	//http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
-	//	http.ServeFile(writer, request, "home.html")
-	//})
+
 	http.HandleFunc("/", func(writer http.ResponseWriter, request *http.Request) {
 		ServeWs(sh, writer, request)
 	})
@@ -234,7 +231,6 @@ func (sh *ServiceHub) connectToRegister() error {
 	message := RegisterMessage{
 		Action:  registerActionConnect,
 		RpcAddr: sh.lanIp + ":" + sh.rpcPort,
-		//WsAddr: sh.lanIp+":"+sh.ws
 	}
 
 	// 发送注册信息给register
@@ -263,7 +259,6 @@ func (sh *ServiceHub) checkRegisterConnection() {
 }
 
 func (sh *ServiceHub) getServiceConn(addr string) (*serviceRpcClient, error) {
-	log.Println("method: getServiceConn")
 	if client, ok := sh.otherServices[addr]; ok {
 		return client, nil
 	}

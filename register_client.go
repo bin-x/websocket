@@ -13,13 +13,6 @@ import (
 	"github.com/gorilla/websocket"
 )
 
-const ()
-
-var (
-	newline = []byte{'\n'}
-	space   = []byte{' '}
-)
-
 var upgrader = websocket.Upgrader{
 	ReadBufferSize:  1024,
 	WriteBufferSize: 1024,
@@ -43,7 +36,6 @@ type RegisterMessage struct {
 	Action    string   `json:"action"`
 	Data      string   `json:"data"`
 	RpcAddr   string   `json:"rpc_addr"`
-	WsAddr    string   `json:"ws_addr"`
 	Addresses []string `json:"addresses"`
 }
 
@@ -76,20 +68,13 @@ func (c *RegisterClient) read() {
 		//the register hub will save this service,
 		//than other services can find this one
 		case registerActionConnect:
-
 			if !HostAddrCheck(message.RpcAddr) {
 				log.Println("error: rpc address error")
 				break
 			}
-			//if !HostAddrCheck(message.WsAddr) {
-			//	log.Println("error: ws addr error")
-			//	break
-			//}
 
 			c.rpcAddr = message.RpcAddr
-			//c.wsAddr = message.WsAddr
 			c.hub.connect <- c
-			log.Println("new connection:", c.rpcAddr)
 		}
 	}
 }

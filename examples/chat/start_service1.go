@@ -5,7 +5,9 @@ import (
 	"log"
 
 	//"log"
-	. "websocket"
+
+	//"log"
+	. "github.com/bin-x/websocket"
 )
 
 type App struct {
@@ -18,10 +20,8 @@ func (app *App) OnConnect(clientId string) {
 }
 
 func (app *App) OnMessage(ClientId string, message []byte) {
-	Api.JoinGroup(ClientId, "1")
-	log.Println("group:", Api.GetAllGroups())
-	log.Println("group 1:", Api.GetClientIdsByGroup("1"))
-	Api.SendToAll(message)
+	log.Println("OnMessage:", ClientId)
+	Api.CloseClient(ClientId)
 }
 
 func (app *App) OnClose(ClientId string) {

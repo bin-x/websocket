@@ -22,7 +22,7 @@ func (s *ServiceApi) isLocal(addr string) bool {
 
 // 调用分布式系统中的服务，并将返回结果合并
 func (s *ServiceApi) call(method string, ctx context.Context, request *pb.ServiceRequest) ([]*pb.ServiceResponse, error) {
-	log.Println("call", method)
+	//log.Println("call", method)
 	var responses []*pb.ServiceResponse
 	for addr, _ := range s.hub.otherAddress {
 		// 本地服务则直接调用，减少rpc的开销
@@ -217,7 +217,7 @@ func (s *ServiceApi) GetAllGroups() []string {
 	return groups
 }
 func (s *ServiceApi) CloseClient(clientId string) {
-	s.call("CloseClient", context.Background(), &pb.ServiceRequest{})
+	s.call("CloseClient", context.Background(), &pb.ServiceRequest{ClientId: clientId})
 }
 func (s *ServiceApi) IsOnline(clientId string) bool {
 	responses, _ := s.call("IsOnline", context.Background(), &pb.ServiceRequest{ClientId: clientId})

@@ -18,14 +18,27 @@ type Client struct {
 	// The websocket connection.
 	conn *websocket.Conn
 	// Buffered channel of outbound messages.
-	send chan []byte
-
+	send       chan []byte
 	joinGroup  chan string
 	leaveGroup chan string
 	setInfo    chan map[string]string
 	updateInfo chan map[string]string
+	done       chan bool
+}
 
-	done chan struct{}
+func NewServiceClient(hub *ServiceHub, conn *websocket.Conn) *Client {
+	return &Client{
+		hub:        hub,
+		conn:       conn,
+		groups:     make(map[string]bool),
+		info:       make(map[string]string),
+		send:       make(chan []byte, 256),
+		joinGroup:  make(chan string),
+		leaveGroup: make(chan string),
+		setInfo:    make(chan map[string]string),
+		updateInfo: make(chan map[string]string),
+		done:       make(chan bool),
+	}
 }
 
 func (c *Client) read() {
@@ -36,7 +49,7 @@ func (c *Client) read() {
 		log.Println("recover on read...")
 	}()
 	defer func() {
-		close(c.done)
+		c.done <- true
 	}()
 	c.conn.SetReadLimit(maxMessageSize)
 	c.conn.SetReadDeadline(time.Now().Add(pongWait))
@@ -49,7 +62,7 @@ func (c *Client) read() {
 			}
 			break
 		}
-		log.Println("read message from ", c.conn.RemoteAddr().String(), ". message: ", message)
+		//log.Println("read message from ", c.conn.RemoteAddr().String(), ". message: ", message)
 		c.hub.application.OnMessage(c.id, message)
 	}
 }
@@ -65,12 +78,12 @@ func (c *Client) write() {
 	ticker := time.NewTicker(pingPeriod)
 	defer func() {
 		ticker.Stop()
-		close(c.done)
+		c.done <- true
 	}()
 	for {
 		select {
 		case message, ok := <-c.send:
-			log.Println("sending message: ", message)
+			//log.Println("sending message: ", message)
 			c.conn.SetWriteDeadline(time.Now().Add(writeWait))
 			if !ok {
 				// The hub closed the channel.
@@ -121,7 +134,12 @@ func (c *Client) run() {
 func (c *Client) close() {
 	c.hub.close <- c
 	c.conn.Close()
+	close(c.done)
 	close(c.send)
+	close(c.joinGroup)
+	close(c.leaveGroup)
+	close(c.setInfo)
+	close(c.updateInfo)
 }
 
 // serveWs handles websocket requests from the peer.
@@ -139,19 +157,9 @@ func ServeWs(hub *ServiceHub, w http.ResponseWriter, r *http.Request) {
 		log.Println(err)
 		return
 	}
-	client := &Client{
-		hub:        hub,
-		conn:       conn,
-		groups:     make(map[string]bool),
-		info:       make(map[string]string),
-		send:       make(chan []byte, 256),
-		joinGroup:  make(chan string),
-		leaveGroup: make(chan string),
-		setInfo:    make(chan map[string]string),
-		updateInfo: make(chan map[string]string),
-		done:       make(chan struct{}),
-	}
+
 	// todo, 初始化client id
+	client := NewServiceClient(hub, conn)
 	client.id = conn.RemoteAddr().String()
 	hub.connect <- client
 

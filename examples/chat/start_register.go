@@ -1,7 +1,7 @@
 package main
 
 import (
-	"websocket"
+	"github.com/bin-x/websocket"
 )
 
 func main() {

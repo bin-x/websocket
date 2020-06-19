@@ -153,7 +153,7 @@ func (rm *rpcMethods) LeaveGroup(ctx context.Context, request *pb.ServiceRequest
 
 func (rm *rpcMethods) CloseClient(ctx context.Context, request *pb.ServiceRequest) (*pb.ServiceResponse, error) {
 	if client, ok := rm.hub.clients[request.ClientId]; ok {
-		rm.hub.close <- client
+		client.done <- true
 	}
 	return &pb.ServiceResponse{}, nil
 }
@@ -174,12 +174,12 @@ func (rm *rpcMethods) UpdateInfo(ctx context.Context, request *pb.ServiceRequest
 }
 
 func (rm *rpcMethods) SendToAll(ctx context.Context, request *pb.ServiceRequest) (*pb.ServiceResponse, error) {
-	log.Println("call SendToAll. message: ", request.Message)
+	//log.Println("call SendToAll. message: ", request.Message)
 
 	for _, client := range rm.hub.clients {
 		client.send <- request.Message
 	}
-	log.Println("client length:", len(rm.hub.clients))
+	//log.Println("client length:", len(rm.hub.clients))
 
 	return &pb.ServiceResponse{Success: true}, nil
 }
