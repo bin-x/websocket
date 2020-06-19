@@ -33,7 +33,7 @@ func (rm *rpcMethods) GetClientIdsByUid(ctx context.Context, request *pb.Service
 func (rm *rpcMethods) GetClientIdsByGroup(ctx context.Context, request *pb.ServiceRequest) (*pb.ServiceResponse, error) {
 	var clientIds []string
 	if clients, ok := rm.hub.groups[request.Group]; ok {
-		clientIds = make([]string, len(clients))
+		clientIds = make([]string, 0, len(clients))
 		for client, _ := range clients {
 			clientIds = append(clientIds, client.id)
 		}
@@ -49,7 +49,7 @@ func (rm *rpcMethods) GetUidsByGroup(ctx context.Context, request *pb.ServiceReq
 		}
 	}
 	length := len(uidMaps)
-	var uids = make([]string, len(uidMaps), length)
+	var uids = make([]string, 0, length)
 	for uid, _ := range uidMaps {
 		uids = append(uids, uid)
 	}
@@ -57,7 +57,7 @@ func (rm *rpcMethods) GetUidsByGroup(ctx context.Context, request *pb.ServiceReq
 }
 
 func (rm *rpcMethods) GetAllGroups(ctx context.Context, request *pb.ServiceRequest) (*pb.ServiceResponse, error) {
-	groups := make([]string, len(rm.hub.groups))
+	groups := make([]string, 0, len(rm.hub.groups))
 	for group, _ := range rm.hub.groups {
 		groups = append(groups, group)
 	}
@@ -192,7 +192,7 @@ func (rm *rpcMethods) GetAllClientCount(ctx context.Context, request *pb.Service
 }
 
 func (rm *rpcMethods) GetAllUid(ctx context.Context, request *pb.ServiceRequest) (*pb.ServiceResponse, error) {
-	uids := make([]string, len(rm.hub.uidClients))
+	uids := make([]string, 0, len(rm.hub.uidClients))
 	for uid, _ := range rm.hub.uidClients {
 		uids = append(uids, uid)
 	}

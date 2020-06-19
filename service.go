@@ -222,6 +222,7 @@ func (sh *ServiceHub) connectToRegister() error {
 			log.Println("read message from register:", message)
 			switch message.Action {
 			case registerActionBroadcastAddr:
+				sh.otherAddress = map[string]bool{}
 				for _, addr := range message.Addresses {
 					sh.otherAddress[addr] = true
 				}

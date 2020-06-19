@@ -28,7 +28,6 @@ func (r *RegisterHub) run() {
 			r.broadcastServices()
 		case client := <-r.close:
 			delete(r.clients, client)
-
 			r.broadcastServices()
 		}
 	}
