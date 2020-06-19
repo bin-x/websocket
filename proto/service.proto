@@ -1,0 +1,64 @@
+syntax = "proto3";
+
+package proto;
+option go_package = ".;proto";
+
+service ServiceApi{
+
+  rpc sendToAll(serviceRequest) returns(serviceResponse);
+  rpc sendToClient (serviceRequest) returns(serviceResponse);
+  rpc sendToUid (serviceRequest) returns(serviceResponse);
+  rpc sendToGroup (serviceRequest) returns(serviceResponse);
+
+  rpc bindUid (serviceRequest) returns(serviceResponse);
+  rpc unbindUid (serviceRequest) returns(serviceResponse);
+  rpc isUidOnline (serviceRequest) returns(serviceResponse);
+  rpc getUidByClientId (serviceRequest) returns(serviceResponse);
+  rpc getClientIdsByUid (serviceRequest) returns(serviceResponse);
+
+  rpc joinGroup (serviceRequest) returns(serviceResponse);
+  rpc leaveGroup (serviceRequest) returns(serviceResponse);
+  rpc getClientCountByGroup (serviceRequest) returns(serviceResponse);
+  rpc getClientIdsByGroup (serviceRequest) returns(serviceResponse);
+  rpc getUidsByGroup (serviceRequest) returns(serviceResponse);
+  rpc getUidCountByGroup (serviceRequest) returns(serviceResponse);
+
+  rpc getAllUid (serviceRequest) returns(serviceResponse);
+  rpc getAllGroups (serviceRequest) returns(serviceResponse);
+  rpc closeClient (serviceRequest) returns(serviceResponse);
+  rpc isOnline (serviceRequest) returns(serviceResponse);
+  rpc getAllClientCount (serviceRequest) returns(serviceResponse);
+
+
+  rpc getInfo (serviceRequest) returns(serviceResponse);
+  // 全局更新
+  rpc setInfo (serviceRequest) returns(serviceResponse);
+  // 局部更新
+  rpc updateInfo (serviceRequest) returns(serviceResponse);
+}
+
+message serviceRequest{
+  string clientId = 1;
+  string uid = 2;
+  string group = 3;
+  bytes message = 4;
+  map<string, string> info = 5;
+}
+
+message serviceResponse{
+  bool success = 1;
+  bool result = 2;
+  int32 count = 3;
+  repeated string clientIds = 4;
+  repeated string uids = 5;
+  repeated string groups = 6;
+  repeated Client clients = 7;
+//  map<string, string> m = 8;
+}
+
+message Client{
+  string id = 1;
+  string uid = 2;
+  repeated string group = 3;
+  map<string, string> info = 4;
+}
