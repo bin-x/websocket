@@ -3,8 +3,6 @@ package websocket
 import (
 	pb "github.com/bin-x/websocket/proto"
 	"golang.org/x/net/context"
-	"log"
-	"strconv"
 )
 
 type rpcMethods struct {
@@ -42,7 +40,7 @@ func (rm *rpcMethods) GetClientIdsByGroup(ctx context.Context, request *pb.Servi
 }
 
 func (rm *rpcMethods) GetUidsByGroup(ctx context.Context, request *pb.ServiceRequest) (*pb.ServiceResponse, error) {
-	var uidMaps map[string]bool
+	uidMaps := make(map[string]bool)
 	if clients, ok := rm.hub.groups[request.Group]; ok {
 		for client, _ := range clients {
 			uidMaps[client.uid] = true
@@ -78,16 +76,17 @@ func (rm *rpcMethods) GetClientCountByGroup(ctx context.Context, request *pb.Ser
 	return &pb.ServiceResponse{Count: int32(count)}, nil
 }
 
-func (rm *rpcMethods) GetUidCountByGroup(ctx context.Context, request *pb.ServiceRequest) (*pb.ServiceResponse, error) {
-	var uidMaps map[string]bool
-	if clients, ok := rm.hub.groups[request.Group]; ok {
-		for client, _ := range clients {
-			uidMaps[client.uid] = true
-		}
-	}
-	count := len(uidMaps)
-	return &pb.ServiceResponse{Count: int32(count)}, nil
-}
+//
+//func (rm *rpcMethods) GetUidCountByGroup(ctx context.Context, request *pb.ServiceRequest) (*pb.ServiceResponse, error) {
+//	var uidMaps map[string]bool
+//	if clients, ok := rm.hub.groups[request.Group]; ok {
+//		for client, _ := range clients {
+//			uidMaps[client.uid] = true
+//		}
+//	}
+//	count := len(uidMaps)
+//	return &pb.ServiceResponse{Count: int32(count)}, nil
+//}
 
 func (rm *rpcMethods) SendToClient(ctx context.Context, request *pb.ServiceRequest) (*pb.ServiceResponse, error) {
 	if client, ok := rm.hub.clients[request.ClientId]; ok {
@@ -167,26 +166,19 @@ func (rm *rpcMethods) UpdateInfo(ctx context.Context, request *pb.ServiceRequest
 	if client, ok := rm.hub.clients[request.ClientId]; ok {
 		client.updateInfo <- request.Info
 	}
-
-	log.Println("call SetInfo.")
-
 	return &pb.ServiceResponse{Success: true}, nil
 }
 
 func (rm *rpcMethods) SendToAll(ctx context.Context, request *pb.ServiceRequest) (*pb.ServiceResponse, error) {
-	//log.Println("call SendToAll. message: ", request.Message)
 
 	for _, client := range rm.hub.clients {
 		client.send <- request.Message
 	}
-	//log.Println("client length:", len(rm.hub.clients))
 
 	return &pb.ServiceResponse{Success: true}, nil
 }
 
 func (rm *rpcMethods) GetAllClientCount(ctx context.Context, request *pb.ServiceRequest) (*pb.ServiceResponse, error) {
-	log.Println("call GetAllClientCount. count:" + strconv.Itoa(len(rm.hub.clients)))
-
 	count := int32(len(rm.hub.clients))
 	return &pb.ServiceResponse{Success: true, Count: count}, nil
 }
@@ -203,23 +195,5 @@ func (rm *rpcMethods) SetInfo(ctx context.Context, request *pb.ServiceRequest) (
 	if client, ok := rm.hub.clients[request.ClientId]; ok {
 		client.setInfo <- request.Info
 	}
-
-	log.Println("call SetInfo.")
-
 	return &pb.ServiceResponse{Success: true}, nil
 }
-
-//
-//func (rm *rpcMethods) GetAllInfos(ctx context.Context, request *pb.ServiceRequest) (*pb.ServiceResponse, error) {
-//	log.Println("call GetAllInfos.")
-//
-//	var cs []*pb.Client
-//	for _, client := range rm.hub.clients {
-//		info, err := json.Marshal(client.info)
-//		if err != nil {
-//			continue
-//		}
-//		cs = append(cs, &pb.Client{Info: info})
-//	}
-//	return &pb.ServiceResponse{Success: true, Clients: cs}, nil
-//}

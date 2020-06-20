@@ -21,7 +21,7 @@ service ServiceApi{
   rpc getClientCountByGroup (serviceRequest) returns(serviceResponse);
   rpc getClientIdsByGroup (serviceRequest) returns(serviceResponse);
   rpc getUidsByGroup (serviceRequest) returns(serviceResponse);
-  rpc getUidCountByGroup (serviceRequest) returns(serviceResponse);
+//  rpc getUidCountByGroup (serviceRequest) returns(serviceResponse);
 
   rpc getAllUid (serviceRequest) returns(serviceResponse);
   rpc getAllGroups (serviceRequest) returns(serviceResponse);

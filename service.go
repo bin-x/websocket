@@ -119,6 +119,9 @@ func (sh *ServiceHub) run() {
 		// 绑定uid
 		case data := <-sh.bindUid:
 			for client, uid := range data {
+				oldUid := client.uid
+				delete(sh.uidClients[oldUid], client)
+
 				client.uid = uid
 				if _, ok := sh.uidClients[uid]; !ok {
 					sh.uidClients[uid] = make(map[*Client]bool)

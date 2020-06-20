@@ -35,3 +35,24 @@ func HostAddrCheck(addr string) bool {
 func checkPort(i int) bool {
 	return i > 0 && i <= 65535
 }
+
+func EqualWithoutIndex(a1, b1 []string) bool {
+	if len(a1) != len(b1) {
+		return false
+	}
+	a := make([]string, len(a1))
+	b := make([]string, len(b1))
+	copy(a, a1)
+	copy(b, b1)
+re:
+	for _, va := range a {
+		for kb, vb := range b {
+			if va == vb {
+				b = append(b[0:kb], b[kb+1:]...)
+				continue re
+			}
+		}
+		return false
+	}
+	return true
+}

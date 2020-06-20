@@ -110,7 +110,7 @@ func (c *Client) run() {
 		if err := recover(); err != nil {
 			log.Println(err)
 		}
-		log.Println("recover on run ...")
+		log.Println("recover on client run ...")
 	}()
 	defer c.hub.application.OnClose(c.id)
 	defer c.close()
