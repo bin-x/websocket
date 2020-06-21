@@ -73,26 +73,37 @@ OnClose: 客户端断开连接时调用，做些清理释放工作。
  
  | 接口 | 描述 |
  | ---- | --- |
- |func SendToAll(message []byte) | 发送消息给所有客户端 |
- |func SendToClient(clientId string, message []byte) | 发送消息给某个客户端|
- |func SendToUid(uid string, message []byte) |  发送消息给某个uid|
- |func SendToGroup(group string, message []byte) | 发送消息给某个分组|
- |func BindUid(clientId, uid string) | 绑定uid到某个client|
- |func UnbindUid(clientId string) |  解绑uid|
- |func IsUidOnline(uid string) bool |   判断某个uid是否在线|
- |func GetUidByClientId(clientId string) string |   通过clientId获取对应的uid|
- |func GetClientIdsByUid(uid string) []string |  通过uid获取对应的clientId，多个client可以绑定到同一个uid，所以该函数返回[]string|
- |func JoinGroup(clientId, group string) |  加入到某个分组|
- |func LeaveGroup(clientId, group string) |  离开某个分组|
- |func GetClientCountByGroup(group string) int | 获取某个分组的client数目|
- |func GetClientIdsByGroup(group string) string | 获取某个分组的所有的clientId|
- |func GetUidsByGroup(group string) string | 获取某个分组的所有uid|
- |func GetUidCountByGroup(group string) int | 获取某个分组的uid数目|
- |func GetAllUid() []string | 获取所有的uid|
- |func GetAllGroups() []string | 获取所有的分组|
- |func CloseClient(clientId string) |  关闭连接|
- |func IsOnline(clientId string) bool | 判断某个clientId 是否在线|
- |func GetAllClientCount() int | 获取所有client数目|
- |func GetInfo(clientId string) map[string]string | 获取某个client的info信息|
- |func SetInfo(clientId string, info map[string]string) | 全局替换某个client的info信息|
- |func UpdateInfo(clientId string, info map[string]string) | 局部更新某个client的info信息|
+ | SendToAll | 发送消息给所有客户端 |
+ | SendToClient | 发送消息给某个客户端|
+ | SendToUid |  发送消息给某个uid|
+ | SendToGroup | 发送消息给某个分组|
+ | BindUid | 绑定uid到某个client|
+ | UnbindUid |  解绑uid|
+ | IsUidOnline|   判断某个uid是否在线|
+ | GetUidByClientId |   通过clientId获取对应的uid|
+ | GetClientIdsByUid |  通过uid获取对应的clientId，多个client可以绑定到同一个uid，所以该函数返回[]string|
+ | JoinGroup |  加入到某个分组|
+ | LeaveGroup |  离开某个分组|
+ | GetClientCountByGroup | 获取某个分组的client数目|
+ | GetClientIdsByGroup | 获取某个分组的所有的clientId|
+ | GetUidsByGroup| 获取某个分组的所有uid|
+ | GetUidCountByGroup| 获取某个分组的uid数目|
+ | GetAllUid()  | 获取所有的uid|
+ | GetAllGroups()| 获取所有的分组|
+ | CloseClient |  关闭连接|
+ | IsOnline | 判断某个clientId 是否在线|
+ | GetAllClientCount| 获取所有client数目|
+ | GetInfo| 获取某个client的info信息|
+ | SetInfo | 全局替换某个client的info信息|
+ | UpdateInfo| 局部更新某个client的info信息|
+ 
+ ### 概念说明：
+ clientId：每个client的全局唯一id
+ 
+ uid：一个client只能绑定一个uid。不同client可以绑定同一个uid，
+ 
+ group：一个client可以加入不同的group，不同client也可以加入同一个group
+ 
+ info：每个client会有一个info字段，用来存储额外信息，数据类型：map[string]string 
+ 
+ 
