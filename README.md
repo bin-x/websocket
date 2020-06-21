@@ -2,12 +2,12 @@
 一款支持分布式部署的websocket框架。
 设计思路来源GatewayWorker框架：http://doc2.workerman.net/
 
-##依赖
+## 依赖
 * [gorilla/websocket](https://github.com/gorilla/websocket) : 底层使用gorilla/websocket进行连接。
 * [grpc](https://github.com/grpc/grpc-go) : 不同服务之间通过grpc进行通信。
 
 
-##工作原理
+## 工作原理
 整个系统包括两个部分：register和service。
 1. 启动register和service
 2. service向register发起长连接注册自己，将自己的rpc地址发送给register
@@ -17,13 +17,13 @@
 6. service通过rpc和其他service进行交互
 7. 业务逻辑代码需要实现websocket.Application接口。包括OnConnect(string)，OnMessage(string, []byte)，OnClose(string)，分别对应创立连接，收到消息，关闭连接时的操作
 
-##安装
+## 安装
 使用go mod进行包管理，在项目中使用以下命令：
 ```
 go get -u github.com/bin-x/websocket
 ```
 
-##使用：
+## 使用：
 复制 examples/default/ 文件夹中的所有文件到你的项目目录中。
 ```
 register/start_register.go: 注册中心启动文件
@@ -62,5 +62,5 @@ OnMessage: 每次服务端收到客户端发来消息时都会调用。最重要
 OnClose: 客户端断开连接时调用，做些清理释放工作。
 ```
 
-###example
+### example
 [chat-app](https://github.com/bin-x/websocket/tree/master/examples/chat-app)
