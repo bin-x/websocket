@@ -60,7 +60,39 @@ func (app *App) OnClose(clientId string) {
 OnConnect: 客户端连接到服务端时调用，每个连接只会调用一次。可以做些初始化操作，如建立数据库连接等。
 OnMessage: 每次服务端收到客户端发来消息时都会调用。最重要的业务单元。
 OnClose: 客户端断开连接时调用，做些清理释放工作。
+
+在OnConnect方法中包含了一个结构体的实例：Api。
+该实例包含所有可在业务逻辑中使用的方法，下文有具体方法介绍。
 ```
 
 ### example
 [chat-app](https://github.com/bin-x/websocket/tree/master/examples/chat-app)
+
+## 业务接口
+业务中可使用的接口放在api.go文件中，包含以下接口：
+ 
+ | 接口 | 描述 |
+ | ---- | --- |
+ |func SendToAll(message []byte) | 发送消息给所有客户端 |
+ |func SendToClient(clientId string, message []byte) | 发送消息给某个客户端|
+ |func SendToUid(uid string, message []byte) |  发送消息给某个uid|
+ |func SendToGroup(group string, message []byte) | 发送消息给某个分组|
+ |func BindUid(clientId, uid string) | 绑定uid到某个client|
+ |func UnbindUid(clientId string) |  解绑uid|
+ |func IsUidOnline(uid string) bool |   判断某个uid是否在线|
+ |func GetUidByClientId(clientId string) string |   通过clientId获取对应的uid|
+ |func GetClientIdsByUid(uid string) []string |  通过uid获取对应的clientId，多个client可以绑定到同一个uid，所以该函数返回[]string|
+ |func JoinGroup(clientId, group string) |  加入到某个分组|
+ |func LeaveGroup(clientId, group string) |  离开某个分组|
+ |func GetClientCountByGroup(group string) int | 获取某个分组的client数目|
+ |func GetClientIdsByGroup(group string) string | 获取某个分组的所有的clientId|
+ |func GetUidsByGroup(group string) string | 获取某个分组的所有uid|
+ |func GetUidCountByGroup(group string) int | 获取某个分组的uid数目|
+ |func GetAllUid() []string | 获取所有的uid|
+ |func GetAllGroups() []string | 获取所有的分组|
+ |func CloseClient(clientId string) |  关闭连接|
+ |func IsOnline(clientId string) bool | 判断某个clientId 是否在线|
+ |func GetAllClientCount() int | 获取所有client数目|
+ |func GetInfo(clientId string) map[string]string | 获取某个client的info信息|
+ |func SetInfo(clientId string, info map[string]string) | 全局替换某个client的info信息|
+ |func UpdateInfo(clientId string, info map[string]string) | 局部更新某个client的info信息|

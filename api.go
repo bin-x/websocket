@@ -17,8 +17,8 @@ type ServiceApi struct {
 
 // 判断是否为本地服务，如果为本地服务则不使用rpc
 func (s *ServiceApi) isLocal(addr string) bool {
-	locaAddr := s.hub.lanIp + ":" + strconv.FormatUint(uint64(s.hub.rpcPort), 10)
-	return locaAddr == addr
+	localAddr := s.hub.lanIp + ":" + strconv.FormatUint(uint64(s.hub.rpcPort), 10)
+	return localAddr == addr
 }
 
 // 调用分布式系统中的服务，并将返回结果合并
