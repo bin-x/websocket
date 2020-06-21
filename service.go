@@ -11,6 +11,7 @@ import (
 	"net"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 )
 
@@ -18,7 +19,7 @@ type ServiceHub struct {
 	rm *rpcMethods
 
 	registerAddr string
-	rpcPort      string
+	rpcPort      uint16
 	lanIp        string
 
 	clients    map[string]*Client
@@ -42,7 +43,7 @@ type ServiceHub struct {
 	otherServices map[string]*serviceRpcClient
 }
 
-func NewServiceHub(registerAddr, rpcPort, lanIp string, application Application) *ServiceHub {
+func NewServiceHub(registerAddr string, rpcPort uint16, lanIp string, application Application) *ServiceHub {
 	return &ServiceHub{
 		registerAddr: registerAddr,
 		rpcPort:      rpcPort,
@@ -169,7 +170,7 @@ func (sh *ServiceHub) Start(addr string) {
 
 // 开启rpc服务
 func (sh *ServiceHub) StartRpc() {
-	listen, err := net.Listen("tcp", ":"+sh.rpcPort)
+	listen, err := net.Listen("tcp", ":"+strconv.FormatUint(uint64(sh.rpcPort), 10))
 
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
@@ -233,7 +234,7 @@ func (sh *ServiceHub) connectToRegister() error {
 
 	message := RegisterMessage{
 		Action:  registerActionConnect,
-		RpcAddr: sh.lanIp + ":" + sh.rpcPort,
+		RpcAddr: sh.lanIp + ":" + strconv.FormatUint(uint64(sh.rpcPort), 10),
 	}
 
 	// 发送注册信息给register

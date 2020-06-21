@@ -6,6 +6,7 @@ import (
 	pb "github.com/bin-x/websocket/proto"
 	"log"
 	"reflect"
+	"strconv"
 )
 
 var Api *ServiceApi
@@ -16,7 +17,7 @@ type ServiceApi struct {
 
 // 判断是否为本地服务，如果为本地服务则不使用rpc
 func (s *ServiceApi) isLocal(addr string) bool {
-	locaAddr := s.hub.lanIp + ":" + s.hub.rpcPort
+	locaAddr := s.hub.lanIp + ":" + strconv.FormatUint(uint64(s.hub.rpcPort), 10)
 	return locaAddr == addr
 }
 

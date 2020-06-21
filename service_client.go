@@ -4,8 +4,11 @@ import (
 	"github.com/gorilla/websocket"
 	"log"
 	"net/http"
+	"sync/atomic"
 	"time"
 )
+
+var currentId uint32 = 0
 
 // Client is a middleman between the websocket connection and the hub.
 type Client struct {
@@ -27,7 +30,7 @@ type Client struct {
 }
 
 func NewServiceClient(hub *ServiceHub, conn *websocket.Conn) *Client {
-	return &Client{
+	client := &Client{
 		hub:        hub,
 		conn:       conn,
 		groups:     make(map[string]bool),
@@ -39,6 +42,14 @@ func NewServiceClient(hub *ServiceHub, conn *websocket.Conn) *Client {
 		updateInfo: make(chan map[string]string),
 		done:       make(chan bool),
 	}
+	client.generateId()
+	return client
+}
+
+func (c *Client) generateId() {
+	// 高并发时防止出现相同id
+	id := atomic.AddUint32(&currentId, 1)
+	c.id = AddressToClientId(c.hub.lanIp, c.hub.rpcPort, id)
 }
 
 func (c *Client) read() {
@@ -62,7 +73,6 @@ func (c *Client) read() {
 			}
 			break
 		}
-		//log.Println("read message from ", c.conn.RemoteAddr().String(), ". message: ", message)
 		c.hub.application.OnMessage(c.id, message)
 	}
 }
@@ -112,8 +122,9 @@ func (c *Client) run() {
 		}
 		log.Println("recover on client run ...")
 	}()
-	defer c.hub.application.OnClose(c.id)
 	defer c.close()
+	defer c.hub.application.OnClose(c.id)
+
 	for {
 		select {
 		case group := <-c.joinGroup:
@@ -160,7 +171,6 @@ func ServeWs(hub *ServiceHub, w http.ResponseWriter, r *http.Request) {
 
 	// todo, 初始化client id
 	client := NewServiceClient(hub, conn)
-	client.id = conn.RemoteAddr().String()
 	hub.connect <- client
 
 	log.Println("all client:", hub.clients)
